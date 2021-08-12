@@ -1,0 +1,574 @@
+USE WeatherProject
+
+
+SELECT *
+FROM WeatherProject..WeatherComplete
+
+
+--Fix Formatting
+--Fix Date
+
+ALTER TABLE WeatherProject..WeatherComplete
+ADD DateRevised DATE
+
+SELECT DateRevised, CONVERT(DATE, DATE)
+FROM WeatherComplete
+
+UPDATE WeatherComplete
+SET DateRevised = CONVERT(DATE, DATE)
+
+--Fix Time
+
+ALTER TABLE WeatherProject..WeatherComplete
+ADD TimeRevised TIME
+
+SELECT TimeRevised, CONVERT(TIME, TIME)
+FROM WeatherComplete
+
+UPDATE WeatherComplete
+SET TimeRevised = CONVERT(TIME, TIME)
+
+--Drop old format
+
+ALTER TABLE WeatherProject..WeatherComplete
+DROP COLUMN Date, Time
+
+--Fix Number Format
+ALTER TABLE WeatherComplete
+ALTER COLUMN Temperature DECIMAL(8,2)
+
+ALTER TABLE WeatherComplete
+ALTER COLUMN Humidity DECIMAL(8,2)
+
+ALTER TABLE WeatherComplete
+ALTER COLUMN WindSpeed DECIMAL(8,2)
+
+ALTER TABLE WeatherComplete
+ALTER COLUMN AirPressure DECIMAL(8,2)
+
+
+--Let's find out some averages for each city and then by average by season
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+GROUP BY Cities 
+
+--Spring
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-03-21' AND '2014-06-20'
+GROUP BY Cities
+
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-03-21' AND '2015-06-20'
+GROUP BY Cities
+
+--Summer
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-06-21' AND '2014-09-21'
+GROUP BY Cities
+
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-06-21' AND '2015-09-21'
+GROUP BY Cities
+
+--Fall
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-09-22' AND '2014-12-20'
+GROUP BY Cities
+
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-09-22' AND '2015-12-20'
+GROUP BY Cities
+
+--Winter
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-12-21' AND '2015-03-20'
+GROUP BY Cities
+
+
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-12-21' AND '2016-03-20'
+GROUP BY Cities
+
+
+
+--Now let's look at how often each type climate occurred for each city by the hour as well as by season
+
+
+SELECT 
+	Cities, 
+	Climate, 
+	((CAST(COUNT(Climate) AS decimal(8,2)) / 26280) * 100)  AS ClimateFrequencyPercentage
+FROM WeatherProject..WeatherComplete
+GROUP BY Cities, Climate
+ORDER BY Cities, ClimateFrequencyPercentage DESC
+
+
+--Spring
+
+SELECT 
+	Cities, 
+	Climate, 
+	((CAST(COUNT(Climate) AS decimal(8,2)) / 2190) * 100)  AS ClimateFrequencyPercentage
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-03-21' AND '2014-06-20'
+GROUP BY Cities, Climate
+ORDER BY Cities, ClimateFrequencyPercentage DESC
+
+
+--Summer
+
+SELECT 
+	Cities, 
+	Climate, 
+	((CAST(COUNT(Climate) AS decimal(8,2)) / 2190) * 100)  AS ClimateFrequencyPercentage
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-06-21' AND '2014-09-21'
+GROUP BY Cities, Climate
+ORDER BY Cities, ClimateFrequencyPercentage DESC
+
+
+--Fall
+
+SELECT 
+	Cities, 
+	Climate, 
+	((CAST(COUNT(Climate) AS decimal(8,2)) / 2190) * 100)  AS ClimateFrequencyPercentage
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-09-22' AND '2014-12-20'
+GROUP BY Cities, Climate
+ORDER BY Cities, ClimateFrequencyPercentage DESC
+
+
+--Winter
+
+SELECT 
+	Cities, 
+	Climate, 
+	((CAST(COUNT(Climate) AS decimal(8,2)) / 2190) * 100)  AS ClimateFrequencyPercentage
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-12-21' AND '2015-03-20'
+GROUP BY Cities, Climate
+ORDER BY Cities, ClimateFrequencyPercentage DESC
+
+
+
+
+--Some of the extremes in each city
+
+SELECT
+	Cities,
+	MIN(Temperature) OVER (PARTITION BY Cities) AS LowestTemp,
+	MAX(Temperature) OVER (PARTITION BY Cities) AS HighestTemp
+FROM WeatherComplete
+--GROUP BY Cities
+ORDER BY HighestTemp DESC
+
+--Made temp table to put dates on query
+
+CREATE TABLE #MinMax(
+	Cities NVARCHAR(255),
+	LowestTemp DECIMAL(8,2),
+	HighestTemp DECIMAL(8,2)
+	)
+
+INSERT INTO #MinMax
+SELECT
+	Cities,
+	MIN(Temperature) OVER (PARTITION BY Cities) AS LowestTemp,
+	MAX(Temperature) OVER (PARTITION BY Cities) AS HighestTemp
+FROM WeatherComplete
+ORDER BY HighestTemp DESC
+
+
+--Coldest Days
+
+SELECT DISTINCT wc.Cities, mm.LowestTemp, wc.DateRevised
+FROM #MinMax mm
+JOIN WeatherComplete wc
+	ON mm.Cities = wc.Cities
+WHERE mm.LowestTemp = CAST(wc.Temperature AS DECIMAL(8,2))
+
+
+--Hottest Days
+
+SELECT DISTINCT wc.Cities, mm.HighestTemp, wc.DateRevised
+FROM #MinMax mm
+JOIN WeatherComplete wc
+	ON mm.Cities = wc.Cities
+WHERE mm.HighestTemp = CAST(wc.Temperature AS DECIMAL(8,2))
+
+
+--Humidity on Coldest and Hottest days
+--Coldest
+
+CREATE TABLE #ColdestDays(
+	Cities NVARCHAR(255),
+	LowestTemp DECIMAL(8,2),
+	DateRevised DATE
+	)
+
+INSERT INTO #ColdestDays
+SELECT DISTINCT wc.Cities, mm.LowestTemp, wc.DateRevised
+FROM #MinMax mm
+JOIN WeatherComplete wc
+	ON mm.Cities = wc.Cities
+WHERE mm.LowestTemp = CAST(wc.Temperature AS DECIMAL(8,2))
+
+SELECT *
+FROM #ColdestDays
+
+SELECT DISTINCT wc.Cities, wc.Temperature, wc.Humidity, wc.DateRevised
+FROM WeatherComplete wc
+JOIN #ColdestDays cd
+	ON wc.Cities = cd.Cities
+WHERE cd.LowestTemp = wc.Temperature
+ORDER BY wc.Cities
+
+
+--Hottest
+
+CREATE TABLE #HottestDays(
+	Cities NVARCHAR(255),
+	HighestTemp DECIMAL(8,2),
+	DateRevised DATE
+	)
+
+INSERT INTO #HottestDays
+SELECT DISTINCT wc.Cities, mm.HighestTemp, wc.DateRevised
+FROM #MinMax mm
+JOIN WeatherComplete wc
+	ON mm.Cities = wc.Cities
+WHERE mm.HighestTemp = CAST(wc.Temperature AS DECIMAL(8,2))
+
+SELECT *
+FROM #HottestDays
+
+SELECT DISTINCT wc.Cities, wc.Temperature, wc.Humidity, wc.DateRevised
+FROM WeatherComplete wc
+JOIN #HottestDays hd
+	ON wc.Cities = hd.Cities
+WHERE hd.HighestTemp = wc.Temperature
+ORDER BY wc.Cities
+
+
+--How much did the seasonal averages change by year
+
+--Spring
+
+CREATE TABLE #AvgsSpring2014(
+	Cities NVARCHAR(255),
+	AvgTemp14 DECIMAL (8,2),
+	AvgHumidity14 DECIMAL (8,2),
+	AvgWindSpeed14 DECIMAL (8,2),
+	AvgAirPressure14 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsSpring2014
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-03-21' AND '2014-06-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsSpring2014
+
+CREATE TABLE #AvgsSpring2015(
+	Cities NVARCHAR(255),
+	AvgTemp15 DECIMAL (8,2),
+	AvgHumidity15 DECIMAL (8,2),
+	AvgWindSpeed15 DECIMAL (8,2),
+	AvgAirPressure15 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsSpring2015
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-03-21' AND '2015-06-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsSpring2015
+
+--Changes from 2014 to 2015
+
+SELECT 
+	a.Cities, 
+	((AvgTemp14-AvgTemp15)*-1) AS TempChange, 
+	((AvgHumidity14-AvgHumidity15)*-1) AS HumidityChange,
+	((AvgWindSpeed14-AvgWindSpeed15)*-1) AS AvgWindSpeedChange,
+	((AvgAirPressure14-AvgAirPressure15)*-1) AS AvgAirPressure
+FROM #AvgsSpring2014 a
+JOIN #AvgsSpring2015 b
+	ON a.Cities = b.Cities
+
+
+--Summer
+
+CREATE TABLE #AvgsSummer2014(
+	Cities NVARCHAR(255),
+	AvgTemp14 DECIMAL (8,2),
+	AvgHumidity14 DECIMAL (8,2),
+	AvgWindSpeed14 DECIMAL (8,2),
+	AvgAirPressure14 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsSummer2014
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-06-21' AND '2014-09-21'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsSummer2014
+
+CREATE TABLE #AvgsSummer2015(
+	Cities NVARCHAR(255),
+	AvgTemp15 DECIMAL (8,2),
+	AvgHumidity15 DECIMAL (8,2),
+	AvgWindSpeed15 DECIMAL (8,2),
+	AvgAirPressure15 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsSummer2015
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-06-21' AND '2015-09-21'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsSummer2015
+
+--Changes from 2014 to 2015
+
+SELECT 
+	a.Cities, 
+	((AvgTemp14-AvgTemp15)*-1) AS TempChange, 
+	((AvgHumidity14-AvgHumidity15)*-1) AS HumidityChange,
+	((AvgWindSpeed14-AvgWindSpeed15)*-1) AS AvgWindSpeedChange,
+	((AvgAirPressure14-AvgAirPressure15)*-1) AS AvgAirPressure
+FROM #AvgsSummer2014 a
+JOIN #AvgsSummer2015 b
+	ON a.Cities = b.Cities
+
+
+--Fall
+
+CREATE TABLE #AvgsFall2014(
+	Cities NVARCHAR(255),
+	AvgTemp14 DECIMAL (8,2),
+	AvgHumidity14 DECIMAL (8,2),
+	AvgWindSpeed14 DECIMAL (8,2),
+	AvgAirPressure14 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsFall2014
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-09-22' AND '2014-12-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsFall2014
+
+CREATE TABLE #AvgsFall2015(
+	Cities NVARCHAR(255),
+	AvgTemp15 DECIMAL (8,2),
+	AvgHumidity15 DECIMAL (8,2),
+	AvgWindSpeed15 DECIMAL (8,2),
+	AvgAirPressure15 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsFall2015
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-09-22' AND '2015-12-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsFall2015
+
+
+--Changes from 2014 to 2015
+
+SELECT 
+	a.Cities, 
+	((AvgTemp14-AvgTemp15)*-1) AS TempChange, 
+	((AvgHumidity14-AvgHumidity15)*-1) AS HumidityChange,
+	((AvgWindSpeed14-AvgWindSpeed15)*-1) AS AvgWindSpeedChange,
+	((AvgAirPressure14-AvgAirPressure15)*-1) AS AvgAirPressure
+FROM #AvgsFall2014 a
+JOIN #AvgsFall2015 b
+	ON a.Cities = b.Cities
+
+
+--Winter
+
+CREATE TABLE #AvgsWinter2014(
+	Cities NVARCHAR(255),
+	AvgTemp14 DECIMAL (8,2),
+	AvgHumidity14 DECIMAL (8,2),
+	AvgWindSpeed14 DECIMAL (8,2),
+	AvgAirPressure14 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsWinter2014
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2014-12-21' AND '2015-03-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsWinter2014
+
+CREATE TABLE #AvgsWinter2015(
+	Cities NVARCHAR(255),
+	AvgTemp15 DECIMAL (8,2),
+	AvgHumidity15 DECIMAL (8,2),
+	AvgWindSpeed15 DECIMAL (8,2),
+	AvgAirPressure15 DECIMAL (8,2)
+	)
+
+INSERT INTO #AvgsWinter2015
+SELECT 
+	Cities, 
+	AVG(Temperature) AS AvgTemp, 
+	AVG(Humidity) AS AvgHumidity, 
+	AVG(WindSpeed) AS AvgWindSpeed, 
+	AVG(AirPressure) AS AvgAirPressure
+FROM WeatherProject..WeatherComplete
+WHERE DateRevised BETWEEN '2015-12-21' AND '2016-03-20'
+GROUP BY Cities
+
+SELECT *
+FROM #AvgsWinter2015
+
+
+--Changes from 2014 to 2015
+
+SELECT 
+	a.Cities, 
+	((AvgTemp14-AvgTemp15)*-1) AS TempChange, 
+	((AvgHumidity14-AvgHumidity15)*-1) AS HumidityChange,
+	((AvgWindSpeed14-AvgWindSpeed15)*-1) AS AvgWindSpeedChange,
+	((AvgAirPressure14-AvgAirPressure15)*-1) AS AvgAirPressure
+FROM #AvgsWinter2014 a
+JOIN #AvgsWinter2015 b
+	ON a.Cities = b.Cities
+
+
+
+
+
+--Rainy days in each City
+
+
+SELECT Cities, SUM(RainyDays) AS RainyDaysTotal
+FROM (SELECT Cities, COUNT(Climate) AS RainyDays
+	FROM WeatherComplete
+	WHERE Climate LIKE '%rain%'
+	GROUP BY Cities
+	UNION ALL
+	SELECT Cities, COUNT(Climate) AS RainyDays
+	FROM WeatherComplete
+	WHERE Climate LIKE '%drizzle%' 
+	GROUP BY Cities
+	) x
+GROUP BY Cities
+ORDER BY RainyDaysTotal DESC
+
